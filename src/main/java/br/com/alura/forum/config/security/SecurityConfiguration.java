@@ -36,11 +36,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	// Configuracoes de autenticacao
+	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(autenticacaoService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 
 	// Configuracoes de autorizacao
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/topicos").permitAll()
@@ -53,8 +55,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, repository), UsernamePasswordAuthenticationFilter.class);		
 	}
 
-	// Configuracoes de recursos estaticos (js, css, imagens)
+	// Configuracoes de recursos estaticos (js, css, imagens)	
+	@Override
 	public void configure(WebSecurity web) throws Exception {
+	    web.ignoring()
+	        .antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**");
 	}
 	
 }
